@@ -53,4 +53,4 @@ Author Contact
 --------------
 
 For further information please contact
-Sasa Dautovic <Sasa.Dautovic@gmail.com>
+Sasa Dautovic (Sasa.Dautovic@gmail.com)
