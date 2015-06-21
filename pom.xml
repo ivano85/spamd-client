@@ -4,7 +4,7 @@
   <groupId>hr.sdautovic.spamd</groupId>
   <artifactId>spamd-client</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>spamd-client</name>
   <url>http://maven.apache.org</url>
   
