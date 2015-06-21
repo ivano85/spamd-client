@@ -1,0 +1,21 @@
+MIME-Version: 1.0
+Message-ID: <CALGuA-00dLXYs1Jt1jSBzTtSbmLq9k5Vy35k-XoEOOE4w40v-A@mail.gmail.com>
+Date: Sat, 20 Jun 2015 17:28:22 +0000
+Subject: Spamassassin client test email
+From: Sasa Dautovic <sasa.dautovic@gmail.com>
+To: Sasa Dautovic <sasa.dautovic@gmail.com>
+Content-Type: multipart/alternative; boundary=001a114b0f68123d930518f65ed1
+
+--001a114b0f68123d930518f65ed1
+Content-Type: text/plain; charset=UTF-8; format=flowed; delsp=yes
+
+Hello World
+
+
+
+
+--001a114b0f68123d930518f65ed1
+Content-Type: text/html; charset=UTF-8
+
+<div dir="ltr">Hello World<div><br></div></div>
+--001a114b0f68123d930518f65ed1--
