@@ -44,7 +44,7 @@ public class SpamdResponse {
 	private void processHeaders(String headers) {
 		String[] header = headers.split("\n");
 		
-		if (header.length > 0) {
+		if (header.length >= 0) {
 			Pattern pattern = Pattern.compile(SPAMD_REGEX);
 	        Matcher matcher = pattern.matcher(header[0]);
 	        
@@ -75,7 +75,7 @@ public class SpamdResponse {
 	    	        }
 	        	}
 	        }
-		}
+		} 
 	}
 	
 	public String spamdProtocolVersion() {

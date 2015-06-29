@@ -161,15 +161,20 @@ public class SpamdClient {
 			case PING:
 					headers = "PING SPAMC/{PROTOCOL_VERSION}";
 					headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
-				break;
+					return headers;
 			
 			default:
 					headers = headers.replace("{ACTION}", m_action.toString());
 					headers = headers.replace("{PROTOCOL_VERSION}", this.m_protocolVersion);
-					headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
-					headers = headers.replace("{USERNAME}", this.m_username);
+//					headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+//					headers = headers.replace("{USERNAME}", this.m_username);
 				break;
 		}
+		
+		/** add default headers **/
+		headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+		headers = headers.replace("{USERNAME}", this.m_username);
+		
 		return headers; 
 	}
 	
@@ -197,6 +202,7 @@ public class SpamdClient {
 			this.m_response = new SpamdResponse(response);
 			
 		} catch (IOException e) {
+			e.printStackTrace();
 			this.m_response = new SpamdResponse("");
 		} 
 	}
