@@ -163,15 +163,15 @@ public class SpamdClient {
 					headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
 					return headers;
 			
+			
+					
 			default:
-					headers = headers.replace("{ACTION}", m_action.toString());
-					headers = headers.replace("{PROTOCOL_VERSION}", this.m_protocolVersion);
-//					headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
-//					headers = headers.replace("{USERNAME}", this.m_username);
 				break;
 		}
 		
 		/** add default headers **/
+		headers = headers.replace("{ACTION}", m_action.toString());
+		headers = headers.replace("{PROTOCOL_VERSION}", this.m_protocolVersion);
 		headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
 		headers = headers.replace("{USERNAME}", this.m_username);
 		

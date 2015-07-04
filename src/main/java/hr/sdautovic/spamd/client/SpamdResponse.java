@@ -13,8 +13,13 @@ public class SpamdResponse {
 			@Override
 			public String toString() { return "Content-length"; }
 		}, 
-		
-		Spam 
+		Spam,
+		Set,
+		Remove,
+		MessageClass {
+			@Override
+			public String toString() { return "Message-class"; }
+		}
 	};
 	public static Boolean OK = false;
 	
