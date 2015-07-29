@@ -3,15 +3,14 @@ package hr.sdautovic.spamd.client;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.ConnectException;
 
 import org.apache.commons.io.IOUtils;
 
-public class SimpleExample {
-	public static void main(String[] args) throws ConnectException, FileNotFoundException, IOException {
-		
+public class TellExample {
+
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		byte[] email = IOUtils.toByteArray(new FileInputStream("src/test/java/hr/sdautovic/spamd/client/email_message.eml"));
-		SpamdClient spamd_client = new SpamdClient("127.0.0.1", 783, SpamdClient.ACTION.PROCESS, email, false);
+		SpamdClient spamd_client = new SpamdClient("127.0.0.1", 783, SpamdClient.ACTION.TELL_HAM, email, false);
 		
 		if (spamd_client.getResponse().OK) {
 			System.out.println("spamd_client OK=" + spamd_client.getResponse().OK);
