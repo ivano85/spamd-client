@@ -1,6 +1,8 @@
 package hr.sdautovic.spamd.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,7 +20,7 @@ public class SpamdClient {
 	private static String REQUEST_HEADERS = "{ACTION} SPAMC/{PROTOCOL_VERSION}".concat("\n").
 			concat("Content-length: {SIZE}").concat("\n").concat("User: {USERNAME}").concat("\n").concat("\r\n");
 	
-	private byte[] m_email = "".getBytes();
+	private InputStream m_email = null;
 	private SpamdResponse m_response = null;
 	
 	private ACTION m_action = ACTION.PING;
@@ -42,7 +44,7 @@ public class SpamdClient {
 		if (email == null) throw new NullPointerException("Email message must be supplied (can not be NULL)");
 		this.m_action = action;
 		this.m_use_remote_bayesian = use_remote_bayesian;
-		this.m_email = email;
+		this.m_email = new ByteArrayInputStream(email);
 		
 		doCheckAndRequest();
 		this.m_socket.close();
@@ -64,7 +66,7 @@ public class SpamdClient {
 		if (email == null) throw new NullPointerException("Email message can't be NULL");
 		this.m_action = action;
 		this.m_use_remote_bayesian = use_remote_bayesian;
-		this.m_email = email;
+		this.m_email = new ByteArrayInputStream(email);
 		
 		doCheckAndRequest();
 		this.m_socket.close();
@@ -87,7 +89,7 @@ public class SpamdClient {
 		if (email == null) throw new NullPointerException("Email message can't be NULL");
 		this.m_action = action;
 		this.m_use_remote_bayesian = use_remote_bayesian;
-		this.m_email = email;
+		this.m_email = new ByteArrayInputStream(email);
 		
 		doCheckAndRequest();
 		this.m_socket.close();
@@ -110,7 +112,7 @@ public class SpamdClient {
 		this.m_action = action;
 		this.m_username = username;
 		this.m_use_remote_bayesian = use_remote_bayesian;
-		this.m_email = email;
+		this.m_email = new ByteArrayInputStream(email);
 		
 		doCheckAndRequest();
 		this.m_socket.close();
@@ -135,7 +137,7 @@ public class SpamdClient {
 		this.m_action = action;
 		this.m_username = username;
 		this.m_use_remote_bayesian = use_remote_bayesian;
-		this.m_email = email;
+		this.m_email = new ByteArrayInputStream(email);
 		
 		doCheckAndRequest();
 		this.m_socket.close();
@@ -161,13 +163,152 @@ public class SpamdClient {
 		this.m_action = action;
 		this.m_username = username;
 		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = new ByteArrayInputStream(email);
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	/**
+	 * @author ivano85
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(ACTION action, InputStream email, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		this.m_socket = new Socket(DEFAULT_HOST, DEFAULT_PORT);
+		
+		if (email == null) throw new NullPointerException("Email message must be supplied (can not be NULL)");
+		this.m_action = action;
+		this.m_use_remote_bayesian = use_remote_bayesian;
 		this.m_email = email;
 		
 		doCheckAndRequest();
 		this.m_socket.close();
 	}
 	
-	private String setHeaders() {
+	/**
+	 * @author ivano85
+	 * @param  hostname IP address or hostname to connect to Spamassassin daemon
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(String hostname, ACTION action, InputStream email, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		if (hostname == null) throw new NullPointerException("Hostname can't be NULL");
+		this.m_socket = new Socket(hostname, DEFAULT_PORT);
+		
+		if (email == null) throw new NullPointerException("Email message can't be NULL");
+		this.m_action = action;
+		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = email;
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	/**
+	 * @author ivano85
+	 * @param  hostname IP address or hostname to connect to Spamassassin daemon
+	 * @param  port network port to use when connecting to Spamassassin daemon
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(String hostname, int port, ACTION action, InputStream email, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		if (hostname == null) throw new NullPointerException("Hostname can't be NULL");
+		this.m_socket = new Socket(hostname, port);
+		
+		if (email == null) throw new NullPointerException("Email message can't be NULL");
+		this.m_action = action;
+		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = email;
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	/**
+	 * @author ivano85
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @param  username username which Spamd will check for specific rules
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(ACTION action, InputStream email, String username, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		this.m_socket = new Socket(DEFAULT_HOST, DEFAULT_PORT);
+		
+		if (email == null) throw new NullPointerException("Email message can't be NULL");
+		if (username == null) throw new NullPointerException("Username can't be NULL");
+		this.m_action = action;
+		this.m_username = username;
+		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = email;
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	/**
+	 * @author ivano85
+	 * @param  hostname IP address or hostname to connect to Spamassassin daemon
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @param  username username which Spamd will check for specific rules
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(String hostname, ACTION action, InputStream email, String username, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		if (hostname == null) throw new NullPointerException("Hostname can't be NULL");
+		this.m_socket = new Socket(hostname, DEFAULT_PORT);
+		
+		if (email == null) throw new NullPointerException("Email message can't be NULL");
+		if (username == null) throw new NullPointerException("Username can't be NULL");
+		this.m_action = action;
+		this.m_username = username;
+		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = email;
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	/**
+	 * @author ivano85
+	 * @param  hostname IP address or hostname to connect to Spamassassin daemon
+	 * @param  port network port to use when connecting to Spamassassin daemon
+	 * @param  action  Spamd action 
+	 * @param  email   email message to check
+	 * @param  username username which Spamd will check for specific rules
+	 * @throws ConnectException if any error connecting to Spamd occurs
+	 * @throws IOException if any IO error occurs
+	 * @throws UnknownHostException if unable to resolve hostname
+	 */
+	public SpamdClient(String hostname, int port, ACTION action, InputStream email, String username, boolean use_remote_bayesian) throws ConnectException, UnknownHostException, IOException {	
+		if (hostname == null) throw new NullPointerException("Hostname can't be NULL");
+		this.m_socket = new Socket(hostname, port);
+		
+		if (email == null) throw new NullPointerException("Email message can't be NULL");
+		if (username == null) throw new NullPointerException("Username can't be NULL");
+		this.m_action = action;
+		this.m_username = username;
+		this.m_use_remote_bayesian = use_remote_bayesian;
+		this.m_email = email;
+		
+		doCheckAndRequest();
+		this.m_socket.close();
+	}
+	
+	private String setHeaders() throws IOException {
 		String headers = REQUEST_HEADERS;
 		String location = "local";
 		
@@ -187,7 +328,7 @@ public class SpamdClient {
 					
 					headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
 					headers = headers.replace("{BAYESIAN_LOCATION}", location);
-					headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+					headers = headers.replace("{SIZE}", String.valueOf(this.m_email.available() + 2));
 					headers = headers.replace("{USERNAME}", this.m_username);
 					return headers;
 					
@@ -201,7 +342,7 @@ public class SpamdClient {
 				
 				headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
 				headers = headers.replace("{BAYESIAN_LOCATION}", location);
-				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.available() + 2));
 				headers = headers.replace("{USERNAME}", this.m_username);
 				return headers;
 			
@@ -215,7 +356,7 @@ public class SpamdClient {
 				
 				headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
 				headers = headers.replace("{BAYESIAN_LOCATION}", location);
-				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.available() + 2));
 				headers = headers.replace("{USERNAME}", this.m_username);
 				return headers;
 				
@@ -229,7 +370,7 @@ public class SpamdClient {
 				
 				headers = headers.replace("{PROTOCOL_VERSION}", PROTOCOL_VERSION);
 				headers = headers.replace("{BAYESIAN_LOCATION}", location);
-				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+				headers = headers.replace("{SIZE}", String.valueOf(this.m_email.available() + 2));
 				headers = headers.replace("{USERNAME}", this.m_username);
 				return headers;
 				
@@ -240,7 +381,7 @@ public class SpamdClient {
 		/** add default headers **/
 		headers = headers.replace("{ACTION}", m_action.toString());
 		headers = headers.replace("{PROTOCOL_VERSION}", this.m_protocolVersion);
-		headers = headers.replace("{SIZE}", String.valueOf(this.m_email.length + 2));
+		headers = headers.replace("{SIZE}", String.valueOf(this.m_email.available() + 2));
 		headers = headers.replace("{USERNAME}", this.m_username);
 		
 		return headers; 
@@ -262,7 +403,11 @@ public class SpamdClient {
 			String headers = setHeaders();
 			
 			this.m_socket.getOutputStream().write(headers.getBytes());
-			this.m_socket.getOutputStream().write(this.m_email);
+			int read;
+			byte[] buffer = new byte[4096];
+			while ((read = m_email.read(buffer)) > 0) {
+				this.m_socket.getOutputStream().write(buffer, 0, read);
+			}
 			this.m_socket.getOutputStream().write("\r\n".getBytes());
 			this.m_socket.getOutputStream().flush();
 			
